@@ -86,10 +86,62 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    1- x e y do filho
+    2- ação que o nó atual deve tomar para chegar ao filho (direção)
+    3- custo desse passo
+
+    quando acha um filho, ele é alcançado (pode ser alcançado varias vezes)
+    quando pego os filhos de alguem, esse alguém é explorado e os filhos passam a ser alcançado
+    evitar explorar mais de uma vez o mesmo nó
+
+    no de profundidado, o que foi adicionado por ultimo STACK
+
+    na busca em largura é o mais velho QUEUE
+
+    no custo uniforme, base em alguma prioridade 
+
+    import em util
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
+    nosAExplorar = util.Stack()
+    nosExplorados = []
+    nosAExplorar.push((problem.getStartState(), []))
+
+    while (not nosAExplorar.isEmpty()):
+        noAtual = nosAExplorar.pop()
+
+        if (noAtual not in nosExplorados):
+            if (problem.isGoalState(noAtual[0])):
+                return noAtual[1]
+            
+            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+
+            for infosFilho in infosFilhosNoAtual:
+                if infosFilho[0] not in nosExplorados:
+                    acoes = noAtual[1].copy()
+                    acoes.append(infosFilho[1])
+                    nosAExplorar.push((infosFilho[0], acoes))
+            
+            nosExplorados.append(noAtual[0])
+                   
+    return []
+
+    # stack = util.Stack()
+    # stack.push((problem.getStartState(),[]))
+    # explored = set()
+    # while not stack.isEmpty():
+    #     temp = stack.pop()
+    #     if problem.isGoalState(temp[0]):
+    #         return temp[1]
+    #     explored.add(temp[0])
+    #     for n in problem.getSuccessors(temp[0]):
+    #         if n[0] not in explored and n[0] not in stack.list:
+    #             stack.push((n[0], temp[1] + [n[1]]))
+
+    # return []
+    #util.raiseNotDefined()
+    
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
