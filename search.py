@@ -141,12 +141,47 @@ def depthFirstSearch(problem):
 
     # return []
     #util.raiseNotDefined()
-    
+
+# def auxBreadthFirstSearch (elem, lista):
+#     for e in lista:
+#         if elem == e[0]:
+#             return True
+#     return False
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    nosAExplorar = util.Queue()
+    nosExplorados = []
+    nosAExplorar.push((problem.getStartState(), []))
+
+    while (not nosAExplorar.isEmpty()):
+        noAtual = nosAExplorar.pop()
+
+        if (noAtual not in nosExplorados):
+            if (problem.isGoalState(noAtual[0])):
+                return noAtual[1]
+            
+            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+
+            for infosFilho in infosFilhosNoAtual:
+
+                estaNaQueue = False
+
+                for e in nosAExplorar.list:
+                    if infosFilho[0] == e[0]:
+                        estaNaQueue = True
+                        break
+                
+                if infosFilho[0] not in nosExplorados and not(estaNaQueue): #(auxBreadthFirstSearch(infosFilho[0], nosAExplorar.list)):
+                    acoes = noAtual[1].copy()
+                    acoes.append(infosFilho[1])
+                    nosAExplorar.push((infosFilho[0], acoes))
+            
+            nosExplorados.append(noAtual[0])
+                   
+    return []
 
 
 def uniformCostSearch(problem):
