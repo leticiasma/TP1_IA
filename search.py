@@ -220,7 +220,7 @@ def uniformCostSearch(problem):
                     #estaNaPQueue = False
 
                 elif estaNaPQueue and custoNaPQueue > noAtual[2] + infosFilho[2]:
-                    print("ATUALIZOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
+                    #Acho que nunca entra nesse if, mas ok
                     for e in nosAExplorar.heap:
                         if infosFilho[0] == e[0]:
                             e[2] = noAtual[2] + infosFilho[2]
@@ -245,8 +245,39 @@ def nullHeuristic(state, problem=None):
 
 def greedySearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    nosAExplorar = util.PriorityQueue()
+    nosExplorados = []
+    nosAExplorar.push((problem.getStartState(), []), heuristic(problem.getStartState(), problem))
+
+    while (not nosAExplorar.isEmpty()):
+        noAtual = nosAExplorar.pop()
+
+        if (noAtual[0] not in nosExplorados):
+            if (problem.isGoalState(noAtual[0])):
+                return noAtual[1]
+            
+            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+
+            for infosFilho in infosFilhosNoAtual:
+
+                estaNaPQueue = False
+
+                for e in nosAExplorar.heap:
+                    if infosFilho[0] == e[0]:
+                        estaNaPQueue = True
+                        break
+                
+                if infosFilho[0] not in nosExplorados and not(estaNaPQueue): #(auxBreadthFirstSearch(infosFilho[0], nosAExplorar.list)):
+                    acoes = noAtual[1].copy()
+                    acoes.append(infosFilho[1])
+                    nosAExplorar.push((infosFilho[0], acoes), heuristic(infosFilho[0], problem))
+
+                    #estaNaPQueue = False
+            
+            nosExplorados.append(noAtual[0])
+                   
+    return []
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
