@@ -101,8 +101,9 @@ def depthFirstSearch(problem):
     no custo uniforme, base em alguma prioridade 
 
     import em util
+
+    REVER PSEUDOCODIGOS NAS AULAS
     """
-    "*** YOUR CODE HERE ***"
 
     nosAExplorar = util.Stack()
     nosExplorados = []
@@ -111,7 +112,7 @@ def depthFirstSearch(problem):
     while (not nosAExplorar.isEmpty()):
         noAtual = nosAExplorar.pop()
 
-        if (noAtual not in nosExplorados):
+        if (noAtual[0] not in nosExplorados):
             if (problem.isGoalState(noAtual[0])):
                 return noAtual[1]
             
@@ -159,7 +160,7 @@ def breadthFirstSearch(problem):
     while (not nosAExplorar.isEmpty()):
         noAtual = nosAExplorar.pop()
 
-        if (noAtual not in nosExplorados):
+        if (noAtual[0] not in nosExplorados):
             if (problem.isGoalState(noAtual[0])):
                 return noAtual[1]
             
@@ -186,8 +187,52 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    nosAExplorar = util.PriorityQueue()
+    nosExplorados = []
+    nosAExplorar.push((problem.getStartState(), [], 0.0), 0.0)
+
+    while (not nosAExplorar.isEmpty()):
+        noAtual = nosAExplorar.pop()
+
+        if (noAtual[0] not in nosExplorados):
+            if (problem.isGoalState(noAtual[0])):
+                return noAtual[1]
+            
+            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+
+            for infosFilho in infosFilhosNoAtual:
+
+                estaNaPQueue = False
+                custoNaPQueue = infosFilho[2]
+
+                for e in nosAExplorar.heap:
+                    if infosFilho[0] == e[0]:
+                        estaNaPQueue = True
+                        custoNaPQueue = e[2]
+                        break
+                
+                if infosFilho[0] not in nosExplorados and not(estaNaPQueue): #(auxBreadthFirstSearch(infosFilho[0], nosAExplorar.list)):
+                    acoes = noAtual[1].copy()
+                    acoes.append(infosFilho[1])
+                    nosAExplorar.push((infosFilho[0], acoes, noAtual[2] + infosFilho[2]), noAtual[2] + infosFilho[2])
+
+                    #estaNaPQueue = False
+
+                elif estaNaPQueue and custoNaPQueue > noAtual[2] + infosFilho[2]:
+                    print("ATUALIZOUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
+                    for e in nosAExplorar.heap:
+                        if infosFilho[0] == e[0]:
+                            e[2] = noAtual[2] + infosFilho[2]
+
+                            acoes = noAtual[1].copy()
+                            acoes.append(infosFilho[1])
+                            e[1] = acoes
+            
+            nosExplorados.append(noAtual[0])
+                   
+    return []
+
 
 
 def nullHeuristic(state, problem=None):
