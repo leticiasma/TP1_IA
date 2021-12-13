@@ -1,0 +1,38 @@
+Para o problema de encontrar 1 comida no mediumMaze:
+
+-Busca em Profundidade (DFS):
+	Path found with total cost of 130 in 0.0 seconds
+	Search nodes expanded: 146
+	Otimalidade da solução: (?)
+	Outras métricas relevantes: Memória, talvez (?) 
+
+-Busca em Largura (BFS):
+	Path found with total cost of 68 in 0.0 seconds
+	Search nodes expanded: 269
+	Otimalidade da solução: (?)
+	Outras métricas relevantes: Memória, talvez (?) 
+
+-Busca de Custo Uniforme (UCS): --> Estranho... Igualzinho ao de cima... Checar para outros casos de teste.
+	Path found with total cost of 68 in 0.0 seconds
+	Search nodes expanded: 269
+	Otimalidade da solução: (?)
+	Outras métricas relevantes: Memória, talvez (?)
+
+-Busca Gulosa (best first search) usando a heurística manhattanHeuristic:
+	Path found with total cost of 74 in 0.0 seconds
+	Search nodes expanded: 78
+	Otimalidade da solução: (?)
+	Outras métricas relevantes: Memória, talvez (?)
+
+	Acho que pode não encontrar o melhor caminho diferente do abaixo.
+
+-Busca A* usando a heurística manhattanHeuristic:
+	Path found with total cost of 68 in 0.0 seconds
+	Search nodes expanded: 221 --> Estranho... Expande mais nós que o guloso
+	Otimalidade da solução: (?)
+	Outras métricas relevantes: Memória, talvez (?)
+
+-Uma nova heurística para o A*:
+
+---
+Para o problema de encontrar 1 comida no bigMaze:

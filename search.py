@@ -86,68 +86,35 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    1- x e y do filho
-    2- ação que o nó atual deve tomar para chegar ao filho (direção)
-    3- custo desse passo
-
-    quando acha um filho, ele é alcançado (pode ser alcançado varias vezes)
-    quando pego os filhos de alguem, esse alguém é explorado e os filhos passam a ser alcançado
-    evitar explorar mais de uma vez o mesmo nó
-
-    no de profundidado, o que foi adicionado por ultimo STACK
-
-    na busca em largura é o mais velho QUEUE
-
-    no custo uniforme, base em alguma prioridade 
-
-    import em util
-
-    REVER PSEUDOCODIGOS NAS AULAS
     """
 
     nosAExplorar = util.Stack()
     nosExplorados = []
-    nosAExplorar.push((problem.getStartState(), []))
 
-    while (not nosAExplorar.isEmpty()):
+    caminhosNos = dict()
+    caminhosNos[problem.getStartState()] = []
+
+    nosAExplorar.push(problem.getStartState())
+
+    while not(nosAExplorar.isEmpty()):
         noAtual = nosAExplorar.pop()
 
-        if (noAtual[0] not in nosExplorados):
-            if (problem.isGoalState(noAtual[0])):
-                return noAtual[1]
-            
-            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+        if (problem.isGoalState(noAtual)):
+            return caminhosNos[noAtual]
 
-            for infosFilho in infosFilhosNoAtual:
-                if infosFilho[0] not in nosExplorados:
-                    acoes = noAtual[1].copy()
-                    acoes.append(infosFilho[1])
-                    nosAExplorar.push((infosFilho[0], acoes))
-            
-            nosExplorados.append(noAtual[0])
+        nosExplorados.append(noAtual)
+
+        infosFilhosNoAtual = problem.getSuccessors(noAtual)
+
+        for infosFilho in infosFilhosNoAtual:
+            if (infosFilho[0] not in nosExplorados):
+                acoes = caminhosNos[noAtual].copy()
+                acoes.append(infosFilho[1])
+
+                nosAExplorar.push(infosFilho[0])
+                caminhosNos[infosFilho[0]] = acoes
                    
     return []
-
-    # stack = util.Stack()
-    # stack.push((problem.getStartState(),[]))
-    # explored = set()
-    # while not stack.isEmpty():
-    #     temp = stack.pop()
-    #     if problem.isGoalState(temp[0]):
-    #         return temp[1]
-    #     explored.add(temp[0])
-    #     for n in problem.getSuccessors(temp[0]):
-    #         if n[0] not in explored and n[0] not in stack.list:
-    #             stack.push((n[0], temp[1] + [n[1]]))
-
-    # return []
-    #util.raiseNotDefined()
-
-# def auxBreadthFirstSearch (elem, lista):
-#     for e in lista:
-#         if elem == e[0]:
-#             return True
-#     return False
 
 
 def breadthFirstSearch(problem):
@@ -155,32 +122,37 @@ def breadthFirstSearch(problem):
     
     nosAExplorar = util.Queue()
     nosExplorados = []
-    nosAExplorar.push((problem.getStartState(), []))
 
-    while (not nosAExplorar.isEmpty()):
+    caminhosNos = dict()
+    caminhosNos[problem.getStartState()] = []
+
+    nosAExplorar.push(problem.getStartState())
+
+    while not(nosAExplorar.isEmpty()):
         noAtual = nosAExplorar.pop()
 
-        if (noAtual[0] not in nosExplorados):
-            if (problem.isGoalState(noAtual[0])):
-                return noAtual[1]
-            
-            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+        if (problem.isGoalState(noAtual)):
+            return caminhosNos[noAtual]
+        
+        nosExplorados.append(noAtual)
 
-            for infosFilho in infosFilhosNoAtual:
+        infosFilhosNoAtual = problem.getSuccessors(noAtual)
 
-                estaNaQueue = False
+        for infosFilho in infosFilhosNoAtual:
 
-                for e in nosAExplorar.list:
-                    if infosFilho[0] == e[0]:
-                        estaNaQueue = True
-                        break
+            estaNaQueue = False
+
+            for no in nosAExplorar.list:
+                if infosFilho[0] == no:
+                    estaNaQueue = True
+                    break
                 
-                if infosFilho[0] not in nosExplorados and not(estaNaQueue): #(auxBreadthFirstSearch(infosFilho[0], nosAExplorar.list)):
-                    acoes = noAtual[1].copy()
-                    acoes.append(infosFilho[1])
-                    nosAExplorar.push((infosFilho[0], acoes))
-            
-            nosExplorados.append(noAtual[0])
+            if (infosFilho[0] not in nosExplorados and not(estaNaQueue)):
+                acoes = caminhosNos[noAtual].copy()
+                acoes.append(infosFilho[1])
+
+                nosAExplorar.push(infosFilho[0])
+                caminhosNos[infosFilho[0]] = acoes
                    
     return []
 
@@ -190,46 +162,55 @@ def uniformCostSearch(problem):
 
     nosAExplorar = util.PriorityQueue()
     nosExplorados = []
-    nosAExplorar.push((problem.getStartState(), [], 0.0), 0.0)
+
+    caminhoNos = dict()
+
+    nosAExplorar.push(problem.getStartState(), 0.0)
+    caminhoNos[problem.getStartState()] = [[], 0.0]
 
     while (not nosAExplorar.isEmpty()):
         noAtual = nosAExplorar.pop()
 
-        if (noAtual[0] not in nosExplorados):
-            if (problem.isGoalState(noAtual[0])):
-                return noAtual[1]
-            
-            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+        if (noAtual not in nosExplorados):
+            if (problem.isGoalState(noAtual)):
+                return caminhoNos[noAtual][0]
+
+            nosExplorados.append(noAtual)
+                
+            infosFilhosNoAtual = problem.getSuccessors(noAtual)
 
             for infosFilho in infosFilhosNoAtual:
 
                 estaNaPQueue = False
                 custoNaPQueue = infosFilho[2]
 
-                for e in nosAExplorar.heap:
-                    if infosFilho[0] == e[0]:
+                for no in nosAExplorar.heap:
+                    if infosFilho[0] == no[2]:
                         estaNaPQueue = True
-                        custoNaPQueue = e[2]
+                        custoNaPQueue = caminhoNos[no[2]][1]
                         break
-                
-                if infosFilho[0] not in nosExplorados and not(estaNaPQueue): #(auxBreadthFirstSearch(infosFilho[0], nosAExplorar.list)):
-                    acoes = noAtual[1].copy()
+
+                custo = caminhoNos[noAtual][1] + infosFilho[2]    
+
+                if infosFilho[0] not in nosExplorados and not(estaNaPQueue):
+                    acoes = caminhoNos[noAtual][0].copy()
                     acoes.append(infosFilho[1])
-                    nosAExplorar.push((infosFilho[0], acoes, noAtual[2] + infosFilho[2]), noAtual[2] + infosFilho[2])
 
-                    #estaNaPQueue = False
+                    nosAExplorar.push(infosFilho[0], custo)
+                    caminhoNos[infosFilho[0]] = [acoes, custo]
 
-                elif estaNaPQueue and custoNaPQueue > noAtual[2] + infosFilho[2]:
+                elif estaNaPQueue and custoNaPQueue > custo:
                     #Acho que nunca entra nesse if, mas ok
-                    for e in nosAExplorar.heap:
-                        if infosFilho[0] == e[0]:
-                            e[2] = noAtual[2] + infosFilho[2]
 
-                            acoes = noAtual[1].copy()
+                    for no in nosAExplorar.heap:
+                        if infosFilho[0] == no[2]:
+                            caminhoNos[no[2]][1] = custo
+
+                            acoes = caminhoNos[noAtual][0].copy()
                             acoes.append(infosFilho[1])
-                            e[1] = acoes
-            
-            nosExplorados.append(noAtual[0])
+                            caminhoNos[no[2]][0] = acoes
+
+                            nosAExplorar.update(infosFilho[0], custo)
                    
     return []
 
@@ -256,6 +237,8 @@ def greedySearch(problem, heuristic=nullHeuristic):
         if (noAtual[0] not in nosExplorados):
             if (problem.isGoalState(noAtual[0])):
                 return noAtual[1]
+
+            nosExplorados.append(noAtual[0])
             
             infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
 
@@ -263,8 +246,8 @@ def greedySearch(problem, heuristic=nullHeuristic):
 
                 estaNaPQueue = False
 
-                for e in nosAExplorar.heap:
-                    if infosFilho[0] == e[0]:
+                for no in nosAExplorar.heap:
+                    if infosFilho[0] == no[0]:
                         estaNaPQueue = True
                         break
                 
@@ -272,18 +255,56 @@ def greedySearch(problem, heuristic=nullHeuristic):
                     acoes = noAtual[1].copy()
                     acoes.append(infosFilho[1])
                     nosAExplorar.push((infosFilho[0], acoes), heuristic(infosFilho[0], problem))
-
-                    #estaNaPQueue = False
-            
-            nosExplorados.append(noAtual[0])
                    
     return []
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    nosAExplorar = util.PriorityQueue()
+    nosExplorados = []
+    nosAExplorar.push((problem.getStartState(), [], 0.0), 0.0 + heuristic(problem.getStartState(), problem))
+
+    while (not nosAExplorar.isEmpty()):
+        noAtual = nosAExplorar.pop()
+
+        if (noAtual[0] not in nosExplorados):
+            if (problem.isGoalState(noAtual[0])):
+                return noAtual[1]
+            
+            infosFilhosNoAtual = problem.getSuccessors(noAtual[0])
+
+            for infosFilho in infosFilhosNoAtual:
+
+                estaNaPQueue = False
+                custoNaPQueue = infosFilho[2]
+
+                for no in nosAExplorar.heap:
+                    if infosFilho[0] == no[0]:
+                        estaNaPQueue = True
+                        custoNaPQueue = no[2]
+                        break
+                
+                if infosFilho[0] not in nosExplorados and not(estaNaPQueue):
+                    acoes = noAtual[1].copy()
+                    acoes.append(infosFilho[1])
+                    nosAExplorar.push((infosFilho[0], acoes, noAtual[2] + infosFilho[2]), noAtual[2] + infosFilho[2] + heuristic(infosFilho[0], problem))
+
+                elif estaNaPQueue and custoNaPQueue > noAtual[2] + infosFilho[2]:
+                    #Acho que nunca entra nesse if, mas ok
+                    for no in nosAExplorar.heap:
+                        if infosFilho[0] == no[0]:
+                            no[2] = noAtual[2] + infosFilho[2]
+
+                            acoes = noAtual[1].copy()
+                            acoes.append(infosFilho[1])
+                            no[1] = acoes
+            
+            nosExplorados.append(noAtual[0])
+                   
+    return []
+
 
 
 def foodHeuristic(state, problem):
@@ -315,8 +336,26 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+
+    listaFoodGrid = foodGrid.asList()
+
+    distancias = []
+
+    for i in range(len(listaFoodGrid)):
+        distancias.append(util.manhattanDistance(position, listaFoodGrid[i]))
+
+    if len(distancias) == 0:
+        return 0
+    else:
+        return sum(distancias)/len(distancias)
+
+    # food = foodGrid.asList()
+
+    # distanceToDot = 0
+    # for dot in food:
+    #     if util.manhattanDistance(position, dot) > distanceToDot:
+    #         distanceToDot = util.manhattanDistance(position, dot)
+    # return distanceToDot
 
 
 # Abbreviations
