@@ -190,27 +190,26 @@ def uniformCostSearch(problem):
                         custoNaPQueue = caminhoCustoNos[no[2]][1]
                         break
 
-                custo = caminhoCustoNos[noAtual][1] + infosFilho[2]    
+                custoCaminho = caminhoCustoNos[noAtual][1] + infosFilho[2]    
 
                 if infosFilho[0] not in nosExplorados and not(estaNaPQueue):
                     acoes = caminhoCustoNos[noAtual][0].copy()
                     acoes.append(infosFilho[1])
 
-                    nosAExplorar.push(infosFilho[0], custo)
-                    caminhoCustoNos[infosFilho[0]] = [acoes, custo]
+                    nosAExplorar.push(infosFilho[0], custoCaminho)
+                    caminhoCustoNos[infosFilho[0]] = [acoes, custoCaminho]
 
-                elif estaNaPQueue and custoNaPQueue > custo:
-                    #Acho que nunca entra nesse if, mas ok
+                elif estaNaPQueue and custoNaPQueue > custoCaminho:
 
                     for no in nosAExplorar.heap:
                         if infosFilho[0] == no[2]:
-                            caminhoCustoNos[no[2]][1] = custo
+                            caminhoCustoNos[no[2]][1] = custoCaminho
 
                             acoes = caminhoCustoNos[noAtual][0].copy()
                             acoes.append(infosFilho[1])
                             caminhoCustoNos[no[2]][0] = acoes
 
-                            nosAExplorar.update(infosFilho[0], custo)
+                            nosAExplorar.update(infosFilho[0], custoCaminho)
                    
     return []
 
@@ -281,7 +280,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
         if (noAtual not in nosExplorados):
             if (problem.isGoalState(noAtual)):
-                return caminhoCustoNos[noAtual]
+                return caminhoCustoNos[noAtual][0]
+            
+            nosExplorados.append(noAtual)
             
             infosFilhosNoAtual = problem.getSuccessors(noAtual)
 
@@ -295,33 +296,29 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                         estaNaPQueue = True
                         custoNaPQueue = caminhoCustoNos[no[2]][1]
                         break
+
+                custoCaminho = caminhoCustoNos[noAtual][1] + infosFilho[2]
                 
-                custo = caminhoCustoNos[noAtual][1] + infosFilho[2]
+                if infosFilho[0] not in nosExplorados: 
+                    if not(estaNaPQueue):
+                        acoes = caminhoCustoNos[noAtual][0].copy()
+                        acoes.append(infosFilho[1])
+                        nosAExplorar.push(infosFilho[0], custoCaminho + heuristic(infosFilho[0], problem))
+                        
+                        caminhoCustoNos[infosFilho[0]] = [acoes, custoCaminho]
 
-                if infosFilho[0] not in nosExplorados and not(estaNaPQueue):
-                    acoes = caminhoCustoNos[noAtual][0].copy()
-                    acoes.append(infosFilho[1])
-                    nosAExplorar.push(infosFilho[0], custo + heuristic(infosFilho[0], problem))
-                    caminhoCustoNos[infosFilho[0]] = [acoes, custo]
-                
-                #nao sei se essa soma da heurística no final tá certa
-                elif estaNaPQueue and custoNaPQueue > custo + heuristic(infosFilho[0], problem):
-                    #Acho que nunca entra nesse if, mas ok
-                    for no in nosAExplorar.heap:
-                        if infosFilho[0] == no[2]:
-                            caminhoCustoNos[no[2]][1] = custo + heuristic(infosFilho[0], problem)
+                    elif estaNaPQueue and custoNaPQueue > custoCaminho:
+                        for no in nosAExplorar.heap:
+                            if infosFilho[0] == no[2]:
+                                caminhoCustoNos[no[2]][1] = custoCaminho
 
-                            acoes = caminhoCustoNos[noAtual][0].copy()
-                            acoes.append(infosFilho[1])
-                            caminhoCustoNos[no[2]][0] = acoes
+                                acoes = caminhoCustoNos[noAtual][0].copy()
+                                acoes.append(infosFilho[1])
+                                caminhoCustoNos[no[2]][0] = acoes
 
-                            nosAExplorar.update(infosFilho[0], custo + heuristic(infosFilho[0], problem))
-                            caminhoCustoNos[infosFilho[0]] = [acoes, custo] #ou seria custo+heuristica?
-            
-            nosExplorados.append(noAtual)
+                                nosAExplorar.update(infosFilho[0], custoCaminho + heuristic(infosFilho[0], problem))
                    
     return []
-
 
 
 def foodHeuristic(state, problem):
@@ -364,16 +361,7 @@ def foodHeuristic(state, problem):
     if len(distancias) == 0:
         return 0
     else:
-        return sum(distancias)/len(distancias)
-
-    # food = foodGrid.asList()
-
-    # distanceToDot = 0
-    # for dot in food:
-    #     if util.manhattanDistance(position, dot) > distanceToDot:
-    #         distanceToDot = util.manhattanDistance(position, dot)
-    # return distanceToDot
-
+        return sum(distancias)/len(listaFoodGrid)
 
 # Abbreviations
 bfs = breadthFirstSearch
