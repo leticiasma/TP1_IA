@@ -358,7 +358,7 @@ def foodHeuristic(state, problem):
     for i in range(len(listaFoodGrid)):
         distancias.append(util.manhattanDistance(position, listaFoodGrid[i]))
 
-    if len(distancias) == 0:
+    if len(listaFoodGrid) == 0:
         return 0
     else:
         return sum(distancias)/len(listaFoodGrid)
